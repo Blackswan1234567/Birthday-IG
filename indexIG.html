@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday My Love ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --pink: #ffafcc;
+    --cream: #fdf0d5;
+    --soft-red: #ff4d6d;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #fdf0d5 0%, #ffafcc 100%);
+    color: #5e503f;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  #overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.8s;
+  }
+
+  .welcome-bear img { 
+    width: 200px; 
+    height: auto;
+    margin-bottom: 20px; 
+    animation: bounce 2s infinite; 
+  }
+  
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    transition: opacity 1s;
+  }
+
+  h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 50px;
+    color: var(--soft-red);
+    margin: 0;
+  }
+
+  .cake-container {
+    position: relative;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 40px;
+    border: 4px dashed var(--pink);
+  }
+
+  .layer {
+    height: 40px;
+    background: #ffc8dd;
+    border-radius: 12px;
+    margin: 4px auto;
+    border-bottom: 5px solid #ffb3c1;
+    transform: scale(0);
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .l1 { width: 180px; }
+  .l2 { width: 140px; }
+  .l3 { width: 90px; }
+  .show-layer { transform: scale(1); }
+
+  .candle {
+    width: 10px;
+    height: 35px;
+    background: white;
+    border-radius: 3px;
+    position: relative;
+    margin: 0 auto -5px auto;
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 2;
+  }
+
+  .flame {
+    width: 14px;
+    height: 22px;
+    background: radial-gradient(circle, #ffea00, #ff9100);
+    border-radius: 50% 50% 20% 20%;
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px #ff9100;
+    animation: flicker 0.1s infinite alternate;
+    /* ADDED: Smooth transition for blowing out */
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  @keyframes flicker { from { opacity: 0.8; } to { opacity: 1; } }
+
+  .instruction { font-size: 16px; color: #a06060; margin-top: 10px; }
+
+  .bear {
+    position: absolute;
+    font-size: 40px;
+    bottom: -60px;
+    user-select: none;
+    pointer-events: none;
+    z-index: 100;
+    animation: floatUp linear forwards;
+  }
+
+  @keyframes floatUp { to { transform: translateY(-120vh) rotate(360deg); opacity: 0; } }
+
+  button {
+    background: var(--soft-red);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
+  }
+
+  .hidden { display: none; opacity: 0; }
+  .show-message { display: block; opacity: 1; transition: opacity 1s; }
+</style>
+</head>
+
+<body>
+
+  <audio id="bgMusic" loop>
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="overlay">
+    <div class="welcome-bear">
+        <img src="bear.jpg" alt="Happy Birthday Bear">
+    </div>
+    <button onclick="initSurprise()">Open Your Surprise jagiya ❤️</button>
+    <p style="margin-top:10px; color:#888; font-size:12px;">Imagine your friend is a pro programmer!</p>
+  </div>
+
+  <div class="hero" id="mainHero">
+    <h1 id="title">Loading...</h1>
+    
+    <div class="cake-container">
+      <div class="candle" id="candle">
+        <div class="flame" id="flame"></div>
+      </div>
+      <div class="layer l3" id="l3"></div>
+      <div class="layer l2" id="l2"></div>
+      <div class="layer l1" id="l1"></div>
+    </div>
+
+    <div id="status">
+      <p class="instruction" id="hintText">Building something special... 🎂</p>
+    </div>
+
+    <div id="finalMessage" class="hidden">
+      <h2 style="color: var(--soft-red); font-size: 28px;">🎉 Happy Birthday Indhu! ❤️</h2>
+      <button onclick="window.location.href='letter.html'">💌 Open Your Love Letter</button>
+    </div>
+  </div>
+
+<script>
+  let isBlown = false;
+  let audioContext, analyser;
+
+  function initSurprise() {
+    const music = document.getElementById('bgMusic');
+    music.volume = 1.0; 
+    music.play().catch(e => console.log("Audio issue: ", e));
+
+    document.getElementById('overlay').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('mainHero').style.opacity = '1';
+      startCakeBuild();
+    }, 800);
+
+    setupMic();
+  }
+
+  function startCakeBuild() {
+    setTimeout(() => document.getElementById('l1').classList.add('show-layer'), 500);
+    setTimeout(() => document.getElementById('l2').classList.add('show-layer'), 1100);
+    setTimeout(() => document.getElementById('l3').classList.add('show-layer'), 1700);
+    
+    setTimeout(() => {
+      document.getElementById('candle').style.opacity = '1';
+      document.getElementById('title').innerText = "Make a Wish!";
+      document.getElementById('hintText').innerHTML = "Blow into the mic or wait 5 seconds... 🌬️";
+      
+      setTimeout(() => {
+        if (!isBlown) blowOut();
+      }, 5000);
+
+    }, 2500);
+  }
+
+  function setupMic() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+        analyser.fftSize = 256;
+        detectBlow();
+      })
+      .catch(err => console.log("No mic available"));
+  }
+
+  function detectBlow() {
+    if (isBlown) return;
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(dataArray);
+    let avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+    if (avg > 50) { blowOut(); } 
+    else { requestAnimationFrame(detectBlow); }
+  }
+
+  function blowOut() {
+    if (isBlown) return;
+    isBlown = true;
+    
+    // 1. Gently fade and shrink the flame
+    const flame = document.getElementById('flame');
+    flame.style.opacity = '0';
+    flame.style.transform = 'translateX(-50%) scale(0)';
+
+    // 2. Wait 1 second (suspense!) before showing the celebration
+    setTimeout(() => {
+      document.getElementById('hintText').style.display = 'none';
+      document.getElementById('title').style.display = 'none';
+      
+      const finalMsg = document.getElementById('finalMessage');
+      finalMsg.classList.remove('hidden');
+      finalMsg.classList.add('show-message');
+
+      // 3. Start raining decorations
+      for(let i=0; i<60; i++) {
+        setTimeout(spawnDecoration, i * 80);
+      }
+    }, 1000);
+  }
+
+  function spawnDecoration() {
+    const items = ['🧸', '🎀', '💖', '✨', '🧁', '🍰', '🍭'];
+    const item = document.createElement('div');
+    item.className = 'bear';
+    item.innerHTML = items[Math.floor(Math.random() * items.length)];
+    item.style.left = Math.random() * 100 + 'vw';
+    item.style.fontSize = (Math.random() * 20 + 30) + 'px';
+    item.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    document.body.appendChild(item);
+    setTimeout(() => item.remove(), 5000);
+  }
+</script>
+
+</body>
+</html>

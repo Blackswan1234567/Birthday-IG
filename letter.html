@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Special Letter for You 🎀</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --primary-pink: #ff85a2;
+    --soft-pink: #ffb7c5;
+    --dark-pink: #d81b60;
+    --bg-gradient: linear-gradient(135deg, #fff1f2 0%, #ffd1dc 100%);
+  }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gradient);
+    color: #444;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Floating Hearts Background */
+  .heart-particle {
+    position: absolute;
+    color: var(--primary-pink);
+    font-size: 20px;
+    user-select: none;
+    pointer-events: none;
+    animation: floatUp 6s linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  .container {
+    max-width: 600px;
+    width: 90%;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 3px solid white;
+    border-radius: 30px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(255, 133, 162, 0.3);
+    position: relative;
+    z-index: 10;
+  }
+
+  .container::before {
+    content: '🌸';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    font-size: 40px;
+  }
+
+  .container::after {
+    content: '🎀';
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    font-size: 40px;
+  }
+
+  h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 55px;
+    color: var(--dark-pink);
+    margin-bottom: 10px;
+    margin-top: 0;
+  }
+
+  #text {
+    font-family: 'Dancing Script', crossorigin;
+    font-size: 22px;
+    line-height: 1.6;
+    min-height: 180px;
+    color: #555;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 3px;
+    height: 20px;
+    background: var(--primary-pink);
+    margin-left: 5px;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+  }
+
+  button {
+    margin-top: 25px;
+    padding: 12px 35px;
+    border-radius: 50px;
+    border: none;
+    background: var(--primary-pink);
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 133, 162, 0.4);
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  button:hover {
+    background: var(--dark-pink);
+    transform: scale(1.05);
+  }
+
+  /* Ribbon decoration */
+  .ribbon {
+    width: 100px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="letter.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container">
+  <h1>For You 💖</h1>
+  <div id="text"></div><span class="cursor"></span>
+  <br>
+  <button onclick="restart()">Replay 💫</button>
+</div>
+
+<script>
+const message = `Happy Birthday Indhu! 🎂\n\nThank you for making every moment special and for bringing so much joy into my life. ✨\n\nYou are not just special... you are more like my saviour maybe sometimes we gone through so many miseries. Even when I'm feeling down, you always make me smile. \n\nI may not always say it perfectly, but I want you to know how much I cherish you. You matter to me more than words can ever explain. 🌸\n\nI wish you a day full of giggles, cake, and all the love you deserve. Stay wonderful, stay you. Happy Birthday! 🎀💖 \n\nIsaiah 30:21 God guides you clearly, directing your path and showing you the right way whenever you feel lost or uncertain.`;
+
+let i = 0;
+let speed = 50;
+let textElement = document.getElementById("text");
+
+function typeWriter() {
+  if (i < message.length) {
+    if (message.charAt(i) === '\n') {
+      textElement.innerHTML += '<br>';
+    } else {
+      textElement.innerHTML += message.charAt(i);
+    }
+    i++;
+    setTimeout(typeWriter, speed);
+  }
+}
+
+function restart() {
+  i = 0;
+  textElement.innerHTML = "";
+  typeWriter();
+}
+
+// Background Heart Animation Logic
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.classList.add("heart-particle");
+  heart.innerHTML = ["❤️", "💖", "🌸", "✨", "☁️", "🎀"][Math.floor(Math.random() * 6)];
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+  heart.style.fontSize = (Math.random() * 15 + 15) + "px";
+  document.body.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 6000);
+}
+
+setInterval(createHeart, 300);
+
+// Interaction to start music and hearts
+document.body.addEventListener("click", () => {
+  const music = document.getElementById("bgMusic");
+  music.volume = 0.4;
+  music.play().catch(()=>{});
+}, { once: true });
+
+// Auto start typing
+window.onload = typeWriter;
+</script>
+
+</body>
+</html>
